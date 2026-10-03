@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -25,24 +26,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Locale;
-
-import ru.mirea.samsonova.cloudid.CloudIdApp;
 import ru.mirea.samsonova.cloudid.R;
-import ru.mirea.samsonova.cloudid.domain.ClassifyCloudUseCase;
-import ru.mirea.samsonova.cloudid.domain.GetCloudDetailsUseCase;
-import ru.mirea.samsonova.cloudid.domain.models.Classification;
-import ru.mirea.samsonova.cloudid.domain.models.CloudType;
 import ru.mirea.samsonova.cloudid.presentation.ScreenRise;
 import ru.mirea.samsonova.cloudid.presentation.details.DetailsActivity;
+import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
+import ru.mirea.samsonova.cloudid.presentation.vm.SkyViewModel;
 
 public class SkyFragment extends Fragment {
     private ImageView imagePreview;
     private Bitmap frame;
     private String photoUri = "";
     private String lastCode = "";
-    private boolean busy;
+    private SkyViewModel viewModel;
 
     private final ActivityResultLauncher<Void> camera =
             registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
@@ -78,6 +73,7 @@ public class SkyFragment extends Fragment {
         imagePreview = view.findViewById(R.id.imagePreview);
         MaterialButton buttonIdentify = view.findViewById(R.id.buttonIdentify);
         LinearLayout cardResult = view.findViewById(R.id.cardResult);
+        viewModel = new ViewModelProvider(this, new CloudViewModelFactory()).get(SkyViewModel.class);
         if (imagePreview.getDrawable() instanceof BitmapDrawable) {
             frame = ((BitmapDrawable) imagePreview.getDrawable()).getBitmap();
         }
@@ -86,7 +82,20 @@ public class SkyFragment extends Fragment {
         }
         view.findViewById(R.id.buttonCamera).setOnClickListener(v -> camera.launch(null));
         view.findViewById(R.id.buttonGallery).setOnClickListener(v -> gallery.launch("image/*"));
-        buttonIdentify.setOnClickListener(v -> identify(buttonIdentify, cardResult, view));
+        buttonIdentify.setOnClickListener(v -> identify(buttonIdentify));
+        viewModel.photoUri().observe(getViewLifecycleOwner(), uri -> {
+            if (uri == null || uri.isEmpty()) {
+                return;
+            }
+            photoUri = uri;
+            try {
+                frame = decode(Uri.parse(uri));
+                imagePreview.setImageBitmap(frame);
+            } catch (IOException ignored) {
+                frame = BitmapFactory.decodeResource(getResources(), R.drawable.art_sky);
+            }
+        });
+        viewModel.result().observe(getViewLifecycleOwner(), result -> applyResult(buttonIdentify, cardResult, view, result));
         cardResult.setOnClickListener(v -> {
             if (lastCode.isEmpty()) {
                 return;
@@ -111,58 +120,40 @@ public class SkyFragment extends Fragment {
         frame = bitmap;
         photoUri = uri == null ? "" : uri;
         imagePreview.setImageBitmap(bitmap);
+        if (viewModel != null) {
+            viewModel.rememberPhoto(photoUri);
+        }
     }
 
-    private void identify(MaterialButton button, LinearLayout card, View view) {
-        if (busy || frame == null || getActivity() == null) {
+    private void identify(MaterialButton button) {
+        if (frame == null) {
             return;
         }
-        busy = true;
         button.setText("Считаем…");
-        float[] pixels = SkyPixels.from(frame);
-        CloudIdApp app = CloudIdApp.get();
-        new Thread(() -> {
-            List<Classification> top = new ClassifyCloudUseCase(app.classifier()).execute(pixels);
-            String code = top.isEmpty() ? "Cu" : top.get(0).getCode();
-            CloudType type = new GetCloudDetailsUseCase(app.clouds()).execute(code);
-            if (getActivity() == null) {
-                return;
-            }
-            requireActivity().runOnUiThread(() -> {
-                busy = false;
-                button.setText("Определить");
-                bindResult(view, card, type, top, code);
-            });
-        }).start();
+        viewModel.classify(SkyPixels.from(frame));
     }
 
-    private void bindResult(View view, LinearLayout card, CloudType type, List<Classification> top, String code) {
-        lastCode = code;
+    private void applyResult(MaterialButton button, LinearLayout card, View view, SkyViewModel.Result result) {
+        if (result == null) {
+            return;
+        }
+        button.setEnabled(!result.busy);
+        button.setText(result.busy ? "Считаем…" : "Определить");
+        if (!result.visible) {
+            return;
+        }
+        boolean firstShow = card.getVisibility() != View.VISIBLE;
+        lastCode = result.code;
         card.setVisibility(View.VISIBLE);
-        card.setAlpha(0f);
-        card.setTranslationY(18f * card.getResources().getDisplayMetrics().density);
-        card.animate().alpha(1f).translationY(0f).setDuration(420).start();
-        TextView title = view.findViewById(R.id.textResultTitle);
-        TextView meta = view.findViewById(R.id.textResultMeta);
-        TextView score = view.findViewById(R.id.textResultScore);
-        TextView rest = view.findViewById(R.id.textTop);
-        title.setText(type == null ? code : type.getName());
-        meta.setText(type == null ? "" : type.getLatin());
-        if (!top.isEmpty()) {
-            score.setText(String.format(Locale.getDefault(), "%.0f%%", top.get(0).getConfidence() * 100f));
+        if (firstShow) {
+            card.setAlpha(0f);
+            card.setTranslationY(18f * card.getResources().getDisplayMetrics().density);
+            card.animate().alpha(1f).translationY(0f).setDuration(420).start();
         }
-        StringBuilder builder = new StringBuilder();
-        for (int i = 1; i < top.size(); i++) {
-            if (builder.length() > 0) {
-                builder.append("  ·  ");
-            }
-            Classification item = top.get(i);
-            builder.append(item.getName())
-                    .append(" ")
-                    .append(Math.round(item.getConfidence() * 100f))
-                    .append("%");
-        }
-        rest.setText(builder.length() == 0 ? "" : "ещё  " + builder);
+        ((TextView) view.findViewById(R.id.textResultTitle)).setText(result.title);
+        ((TextView) view.findViewById(R.id.textResultMeta)).setText(result.latin);
+        ((TextView) view.findViewById(R.id.textResultScore)).setText(result.score);
+        ((TextView) view.findViewById(R.id.textTop)).setText(result.rest);
     }
 
     private Bitmap decode(Uri uri) throws IOException {

@@ -2,6 +2,9 @@ package ru.mirea.samsonova.cloudid.data.repository;
 
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +34,19 @@ public class AtlasRepositoryImpl implements AtlasRepository {
             result.add(mapToDomain(entity));
         }
         return result;
+    }
+
+    public LiveData<List<Sighting>> observe() {
+        return Transformations.map(sightingDao.observeAll(), entities -> {
+            List<Sighting> result = new ArrayList<>();
+            if (entities == null) {
+                return result;
+            }
+            for (SightingEntity entity : entities) {
+                result.add(mapToDomain(entity));
+            }
+            return result;
+        });
     }
 
     private SightingEntity mapToStorage(Sighting sighting) {

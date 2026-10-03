@@ -9,15 +9,16 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import ru.mirea.samsonova.cloudid.CloudIdApp;
 import ru.mirea.samsonova.cloudid.R;
-import ru.mirea.samsonova.cloudid.domain.GetCloudCatalogUseCase;
 import ru.mirea.samsonova.cloudid.domain.models.CloudType;
 import ru.mirea.samsonova.cloudid.presentation.ScreenRise;
 import ru.mirea.samsonova.cloudid.presentation.details.DetailsActivity;
+import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
+import ru.mirea.samsonova.cloudid.presentation.vm.HomeViewModel;
 
 public class CatalogFragment extends Fragment {
     @Nullable
@@ -31,8 +32,14 @@ public class CatalogFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RecyclerView recycler = view.findViewById(R.id.recyclerCatalog);
         recycler.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        java.util.List<CloudType> catalog = new GetCloudCatalogUseCase(CloudIdApp.get().clouds()).execute();
-        recycler.setAdapter(new CloudCardAdapter(catalog, this::open));
+        HomeViewModel viewModel = new ViewModelProvider(requireActivity(), new CloudViewModelFactory())
+                .get(HomeViewModel.class);
+        viewModel.library().observe(getViewLifecycleOwner(), library -> {
+            if (library == null) {
+                return;
+            }
+            recycler.setAdapter(new CloudCardAdapter(library.catalog, this::open));
+        });
         ScreenRise.play(view);
     }
 

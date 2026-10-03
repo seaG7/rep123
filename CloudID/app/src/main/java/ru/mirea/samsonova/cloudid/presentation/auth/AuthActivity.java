@@ -20,15 +20,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-import ru.mirea.samsonova.cloudid.CloudIdApp;
 import ru.mirea.samsonova.cloudid.R;
-import ru.mirea.samsonova.cloudid.domain.LoginUseCase;
-import ru.mirea.samsonova.cloudid.domain.RegisterUseCase;
-import ru.mirea.samsonova.cloudid.domain.repository.AuthCallback;
 import ru.mirea.samsonova.cloudid.presentation.home.HomeActivity;
+import ru.mirea.samsonova.cloudid.presentation.vm.AuthViewModel;
+import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
 
 /**
  * Один экран неба. Фон чуть плывёт и не сменяется.
@@ -55,11 +55,13 @@ public class AuthActivity extends AppCompatActivity {
     private float dragStartY;
     private float dragStartTranslation;
     private int imeBottom;
+    private AuthViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!CloudIdApp.get().auth().getProfile().isGuest()) {
+        viewModel = new ViewModelProvider(this, new CloudViewModelFactory()).get(AuthViewModel.class);
+        if (viewModel.isSignedIn()) {
             openHome();
             return;
         }
@@ -91,13 +93,33 @@ public class AuthActivity extends AppCompatActivity {
         intro.animate().alpha(1f).translationY(0f).setStartDelay(40).setDuration(560).setInterpolator(ease()).start();
 
         findViewById(R.id.buttonNext).setOnClickListener(v -> openSheet());
-        findViewById(R.id.buttonLogin).setOnClickListener(v -> login());
+        findViewById(R.id.buttonLogin).setOnClickListener(v ->
+                viewModel.login(textOf(editEmail), textOf(editPassword)));
         findViewById(R.id.buttonToRegister).setOnClickListener(v -> showRegister());
         findViewById(R.id.buttonBackLogin).setOnClickListener(v -> showLoginPage());
-        findViewById(R.id.buttonDoRegister).setOnClickListener(v -> register());
-        findViewById(R.id.buttonGuest).setOnClickListener(v -> {
-            CloudIdApp.get().auth().continueAsGuest();
-            openHome();
+        findViewById(R.id.buttonDoRegister).setOnClickListener(v ->
+                viewModel.register(textOf(editEmailRegister), textOf(editPasswordRegister)));
+        findViewById(R.id.buttonGuest).setOnClickListener(v -> viewModel.continueAsGuest());
+        MaterialButton loginButton = findViewById(R.id.buttonLogin);
+        MaterialButton registerButton = findViewById(R.id.buttonDoRegister);
+        viewModel.form().observe(this, form -> {
+            loginButton.setEnabled(!form.loading);
+            registerButton.setEnabled(!form.loading);
+            TextView target = form.register ? textErrorRegister : textError;
+            TextView other = form.register ? textError : textErrorRegister;
+            other.setVisibility(View.GONE);
+            if (form.error == null || form.error.isEmpty()) {
+                target.setVisibility(View.GONE);
+            } else {
+                target.setText(form.error);
+                target.setVisibility(View.VISIBLE);
+            }
+        });
+        viewModel.openHome().observe(this, event -> {
+            Boolean go = event == null ? null : event.take();
+            if (Boolean.TRUE.equals(go)) {
+                openHome();
+            }
         });
     }
 
@@ -292,49 +314,6 @@ public class AuthActivity extends AppCompatActivity {
             }
         }).start();
         animateHeight(desiredSheetHeight());
-    }
-
-    private void login() {
-        textError.setVisibility(View.GONE);
-        MaterialButton button = findViewById(R.id.buttonLogin);
-        button.setEnabled(false);
-        new LoginUseCase(CloudIdApp.get().auth()).execute(textOf(editEmail), textOf(editPassword), new AuthCallback() {
-            @Override
-            public void onSuccess() {
-                runOnUiThread(() -> openHome());
-            }
-
-            @Override
-            public void onError(String message) {
-                runOnUiThread(() -> {
-                    button.setEnabled(true);
-                    textError.setText(message);
-                    textError.setVisibility(View.VISIBLE);
-                });
-            }
-        });
-    }
-
-    private void register() {
-        textErrorRegister.setVisibility(View.GONE);
-        MaterialButton button = findViewById(R.id.buttonDoRegister);
-        button.setEnabled(false);
-        new RegisterUseCase(CloudIdApp.get().auth()).execute(
-                textOf(editEmailRegister), textOf(editPasswordRegister), new AuthCallback() {
-                    @Override
-                    public void onSuccess() {
-                        runOnUiThread(() -> openHome());
-                    }
-
-                    @Override
-                    public void onError(String message) {
-                        runOnUiThread(() -> {
-                            button.setEnabled(true);
-                            textErrorRegister.setText(message);
-                            textErrorRegister.setVisibility(View.VISIBLE);
-                        });
-                    }
-                });
     }
 
     private void openHome() {

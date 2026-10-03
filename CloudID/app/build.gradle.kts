@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.recyclerview)
     implementation(libs.fragment)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.livedata)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.glide)
