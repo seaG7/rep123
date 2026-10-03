@@ -1,3 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CloudID</string>
+    <string name="tab_sky">Небо</string>
+    <string name="tab_catalog">Каталог</string>
+    <string name="tab_atlas">Атлас</string>
+    <string name="tab_profile">Профиль</string>
 </resources>

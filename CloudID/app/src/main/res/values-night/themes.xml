@@ -1,7 +1,12 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.CloudID" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.CloudID" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="fontFamily">@font/manrope</item>
+        <item name="android:windowAnimationStyle">@style/Anim.CloudID</item>
+        <item name="materialButtonStyle">@style/Widget.CloudID.Button</item>
+        <item name="textInputStyle">@style/Widget.CloudID.Field</item>
     </style>
 </resources>

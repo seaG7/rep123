@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="bg">#EAF3FB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="ink">#16324F</color>
+    <color name="muted">#6E849C</color>
+    <color name="accent">#2F7BFF</color>
+    <color name="on_accent">#FFFFFF</color>
+    <color name="soft">#E4EFFF</color>
+    <color name="line">#D7E6F2</color>
+    <color name="danger">#D4534A</color>
 </resources>

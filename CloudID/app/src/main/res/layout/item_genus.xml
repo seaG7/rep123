@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/bg_stat"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="8dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="8dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageGenus"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/tab_atlas"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/Shape.CloudID.Stat" />
+
+    <TextView
+        android:id="@+id/textGenus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:textAppearance="@style/Text.CloudID.CardTitle" />
+
+    <TextView
+        android:id="@+id/textGenusCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/accent"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</LinearLayout>
