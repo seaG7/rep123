@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Дела</string>
+    <string name="title">Список дел</string>
+    <string name="lead">Отметьте, что уже сделано. Номер по списку приходит аргументом фрагмента.</string>
+</resources>

@@ -1,6 +1,5 @@
 package ru.mirea.samsonova.cloudid.presentation.catalog;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.mirea.samsonova.cloudid.R;
 import ru.mirea.samsonova.cloudid.domain.models.CloudType;
 import ru.mirea.samsonova.cloudid.presentation.ScreenRise;
-import ru.mirea.samsonova.cloudid.presentation.details.DetailsActivity;
+import ru.mirea.samsonova.cloudid.presentation.home.HomeActivity;
 import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
 import ru.mirea.samsonova.cloudid.presentation.vm.HomeViewModel;
 
@@ -59,8 +58,6 @@ public class CatalogFragment extends Fragment {
     }
 
     private void open(CloudType type) {
-        Intent intent = new Intent(requireContext(), DetailsActivity.class);
-        intent.putExtra(DetailsActivity.EXTRA_CODE, type.getCode());
-        startActivity(intent);
+        ((HomeActivity) requireActivity()).openDetails(type.getCode(), null);
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Страны</string>
+    <string name="title">Страны</string>
+    <string name="lead">Список и справка — два фрагмента. Выбор обновляет нижнюю панель.</string>
+    <string name="pick">Выберите страну</string>
+</resources>

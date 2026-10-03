@@ -1,6 +1,5 @@
 package ru.mirea.samsonova.cloudid.presentation.atlas;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,7 @@ import java.util.HashMap;
 import ru.mirea.samsonova.cloudid.R;
 import ru.mirea.samsonova.cloudid.domain.models.Sighting;
 import ru.mirea.samsonova.cloudid.presentation.ScreenRise;
-import ru.mirea.samsonova.cloudid.presentation.details.DetailsActivity;
+import ru.mirea.samsonova.cloudid.presentation.home.HomeActivity;
 import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
 import ru.mirea.samsonova.cloudid.presentation.vm.HomeViewModel;
 
@@ -72,9 +71,6 @@ public class AtlasFragment extends Fragment {
     }
 
     private void open(Sighting sighting) {
-        Intent intent = new Intent(requireContext(), DetailsActivity.class);
-        intent.putExtra(DetailsActivity.EXTRA_CODE, sighting.getCloudCode());
-        intent.putExtra(DetailsActivity.EXTRA_PHOTO, sighting.getPhotoUri());
-        startActivity(intent);
+        ((HomeActivity) requireActivity()).openDetails(sighting.getCloudCode(), sighting.getPhotoUri());
     }
 }

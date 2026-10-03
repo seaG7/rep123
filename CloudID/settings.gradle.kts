@@ -30,4 +30,7 @@ include(":ScrollViewApp")
 include(":ListViewApp")
 include(":RecyclerViewApp")
 include(":RetrofitApp")
+include(":FragmentApp")
+include(":FragmentManagerApp")
+include(":ResultApiFragmentApp")
  

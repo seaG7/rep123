@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Заметка</string>
+    <string name="title">Заметка о небе</string>
+    <string name="lead">Текст уходит во фрагмент-шторку через Fragment Result API. Фрагменты не держат ссылок друг на друга.</string>
+    <string name="hint">Что видно на небе</string>
+    <string name="open">Открыть шторку</string>
+    <string name="sheet_title">Пришло из другого фрагмента</string>
+    <string name="empty">Текст не введён</string>
+    <string name="sample">Перистые, ветер слабый</string>
+</resources>

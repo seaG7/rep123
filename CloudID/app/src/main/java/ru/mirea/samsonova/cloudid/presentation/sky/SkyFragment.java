@@ -1,6 +1,5 @@
 package ru.mirea.samsonova.cloudid.presentation.sky;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import ru.mirea.samsonova.cloudid.R;
 import ru.mirea.samsonova.cloudid.presentation.ScreenRise;
-import ru.mirea.samsonova.cloudid.presentation.details.DetailsActivity;
+import ru.mirea.samsonova.cloudid.presentation.home.HomeActivity;
 import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
 import ru.mirea.samsonova.cloudid.presentation.vm.SkyViewModel;
 
@@ -100,10 +99,7 @@ public class SkyFragment extends Fragment {
             if (lastCode.isEmpty()) {
                 return;
             }
-            Intent intent = new Intent(requireContext(), DetailsActivity.class);
-            intent.putExtra(DetailsActivity.EXTRA_CODE, lastCode);
-            intent.putExtra(DetailsActivity.EXTRA_PHOTO, photoUri);
-            startActivity(intent);
+            ((HomeActivity) requireActivity()).openDetails(lastCode, photoUri);
         });
         ScreenRise.play(view);
     }
