@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    static final int STUDENT_NUMBER = 23;
+    static final int STUDENT_NUMBER = 19;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
