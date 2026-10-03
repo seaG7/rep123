@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Дежурство</string>
+    <string name="tab_today">Сегодня</string>
+    <string name="tab_info">Справка</string>
+    <string name="tab_shift">Смена</string>
+    <string name="today_title">Небо сейчас</string>
+    <string name="today_body">Кучевые облака, ветер слабый. Видимость хорошая, дождя нет.</string>
+    <string name="info_title">Как смотреть</string>
+    <string name="info_body">Смотрите в сторону ветра, не в солнце. Запишите род, а не только «облачно». Если облако закрывает солнце целиком, это уже не перистые.</string>
+    <string name="shift_title">Кто на смене</string>
+    <string name="shift_body">Самсонова Ольга Павловна\nБСБО-09-23\nДежурная на этой паре.</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/skyFragment">
+
+    <fragment
+        android:id="@+id/skyFragment"
+        android:name="ru.mirea.samsonova.cloudid.presentation.sky.SkyFragment"
+        android:label="Небо" />
+
+    <fragment
+        android:id="@+id/catalogFragment"
+        android:name="ru.mirea.samsonova.cloudid.presentation.catalog.CatalogFragment"
+        android:label="Каталог" />
+
+    <fragment
+        android:id="@+id/atlasFragment"
+        android:name="ru.mirea.samsonova.cloudid.presentation.atlas.AtlasFragment"
+        android:label="Атлас" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="ru.mirea.samsonova.cloudid.presentation.profile.ProfileFragment"
+        android:label="Профиль" />
+
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="ru.mirea.samsonova.cloudid.presentation.details.DetailsFragment"
+        android:label="Карточка" />
+</navigation>

@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
@@ -53,7 +54,7 @@ public class DetailsFragment extends Fragment {
             target.setTranslationY(bars.top);
             return insets;
         });
-        back.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        back.setOnClickListener(v -> Navigation.findNavController(view).popBackStack());
 
         ImageView hero = view.findViewById(R.id.imageHero);
         TextView title = view.findViewById(R.id.textTitle);
@@ -116,13 +117,5 @@ public class DetailsFragment extends Fragment {
         String photo = args == null ? null : args.getString(ARG_PHOTO);
         viewModel.open(code, photo);
         ScreenRise.play(view.findViewById(R.id.detailsRoot));
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (isRemoving() && getActivity() instanceof ru.mirea.samsonova.cloudid.presentation.home.HomeActivity) {
-            ((ru.mirea.samsonova.cloudid.presentation.home.HomeActivity) getActivity()).onDetailsClosed();
-        }
     }
 }

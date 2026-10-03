@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Лекторий</string>
+    <string name="header_title">Лекторий</string>
+    <string name="header_lead">Разработка мобильных приложений</string>
+    <string name="tab_lectures">Лекции</string>
+    <string name="tab_tasks">Задания</string>
+    <string name="tab_about">О курсе</string>
+    <string name="lectures_body">Фрагменты и жизненный цикл.\nNavigation Component и граф экранов.\nНижнее меню и боковая шторка.</string>
+    <string name="tasks_body">Собрать граф из трёх разделов.\nОткрыть шторку свайпом или кнопкой меню.\nКнопка «Назад» закрывает шторку, а не приложение.</string>
+    <string name="about_body">Курс читается на кафедре КБ-14. Разделы лектория переключаются из бокового меню, стартовый экран — список тем.</string>
+</resources>

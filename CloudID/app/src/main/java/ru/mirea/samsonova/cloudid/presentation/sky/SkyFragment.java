@@ -26,8 +26,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import ru.mirea.samsonova.cloudid.R;
+import androidx.navigation.Navigation;
+
 import ru.mirea.samsonova.cloudid.presentation.ScreenRise;
-import ru.mirea.samsonova.cloudid.presentation.home.HomeActivity;
 import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
 import ru.mirea.samsonova.cloudid.presentation.vm.SkyViewModel;
 
@@ -99,7 +100,10 @@ public class SkyFragment extends Fragment {
             if (lastCode.isEmpty()) {
                 return;
             }
-            ((HomeActivity) requireActivity()).openDetails(lastCode, photoUri);
+            Bundle args = new Bundle();
+            args.putString("code", lastCode);
+            args.putString("photo", photoUri);
+            Navigation.findNavController(requireView()).navigate(R.id.detailsFragment, args);
         });
         ScreenRise.play(view);
     }

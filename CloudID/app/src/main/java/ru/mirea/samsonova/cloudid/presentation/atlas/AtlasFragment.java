@@ -18,8 +18,9 @@ import java.util.HashMap;
 
 import ru.mirea.samsonova.cloudid.R;
 import ru.mirea.samsonova.cloudid.domain.models.Sighting;
+import androidx.navigation.Navigation;
+
 import ru.mirea.samsonova.cloudid.presentation.ScreenRise;
-import ru.mirea.samsonova.cloudid.presentation.home.HomeActivity;
 import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
 import ru.mirea.samsonova.cloudid.presentation.vm.HomeViewModel;
 
@@ -71,6 +72,9 @@ public class AtlasFragment extends Fragment {
     }
 
     private void open(Sighting sighting) {
-        ((HomeActivity) requireActivity()).openDetails(sighting.getCloudCode(), sighting.getPhotoUri());
+        Bundle args = new Bundle();
+        args.putString("code", sighting.getCloudCode());
+        args.putString("photo", sighting.getPhotoUri());
+        Navigation.findNavController(requireView()).navigate(R.id.detailsFragment, args);
     }
 }

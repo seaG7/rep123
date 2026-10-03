@@ -10,27 +10,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.fragment.NavHostFragment;
 
 import ru.mirea.samsonova.cloudid.R;
-import ru.mirea.samsonova.cloudid.presentation.atlas.AtlasFragment;
-import ru.mirea.samsonova.cloudid.presentation.catalog.CatalogFragment;
-import ru.mirea.samsonova.cloudid.presentation.details.DetailsFragment;
-import ru.mirea.samsonova.cloudid.presentation.profile.ProfileFragment;
-import ru.mirea.samsonova.cloudid.presentation.sky.SkyFragment;
 
 public class HomeActivity extends AppCompatActivity {
-    private static final String TAB_SKY = "sky";
-    private static final String TAB_CATALOG = "catalog";
-    private static final String TAB_ATLAS = "atlas";
-    private static final String TAB_PROFILE = "profile";
-
     private ImageButton navSky;
     private ImageButton navCatalog;
     private ImageButton navAtlas;
     private ImageButton navProfile;
+    private NavController navController;
     private boolean cardOpen;
 
     @Override
@@ -45,129 +36,65 @@ public class HomeActivity extends AppCompatActivity {
 
         View container = findViewById(R.id.fragmentContainer);
         View nav = findViewById(R.id.bottomNav);
-        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
-            cardOpen = detailsOnScreen();
-            nav.post(this::applyChrome);
-        });
         ViewCompat.setOnApplyWindowInsetsListener(container, (view, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            boolean card = showingCard();
-            view.setPadding(0, card ? 0 : bars.top, 0, 0);
-            nav.setVisibility(card ? View.GONE : View.VISIBLE);
+            view.setPadding(0, cardOpen ? 0 : bars.top, 0, 0);
+            nav.setVisibility(cardOpen ? View.GONE : View.VISIBLE);
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) nav.getLayoutParams();
             params.bottomMargin = bars.bottom + dp(14);
             nav.setLayoutParams(params);
             return insets;
         });
 
-        navSky.setOnClickListener(v -> openTab(TAB_SKY));
-        navCatalog.setOnClickListener(v -> openTab(TAB_CATALOG));
-        navAtlas.setOnClickListener(v -> openTab(TAB_ATLAS));
-        navProfile.setOnClickListener(v -> openTab(TAB_PROFILE));
-
-        if (savedInstanceState == null) {
-            openTab(TAB_SKY);
-        } else {
-            cardOpen = getSupportFragmentManager().getBackStackEntryCount() > 0;
-            paint(savedInstanceState.getString("tab", TAB_SKY));
+        NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragmentContainer);
+        navController = host.getNavController();
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            int id = destination.getId();
+            cardOpen = id == R.id.detailsFragment;
             applyChrome();
-        }
-    }
-
-    public void openDetails(String code, String photo) {
-        cardOpen = true;
-        applyChrome();
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .add(R.id.fragmentContainer, DetailsFragment.newInstance(code, photo))
-                .addToBackStack("details")
-                .commit();
-    }
-
-    public void onDetailsClosed() {
-        cardOpen = false;
-        View nav = findViewById(R.id.bottomNav);
-        nav.post(this::applyChrome);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (navSky.isSelected()) {
-            outState.putString("tab", TAB_SKY);
-        } else if (navCatalog.isSelected()) {
-            outState.putString("tab", TAB_CATALOG);
-        } else if (navAtlas.isSelected()) {
-            outState.putString("tab", TAB_ATLAS);
-        } else {
-            outState.putString("tab", TAB_PROFILE);
-        }
-    }
-
-    private void openTab(String tag) {
-        FragmentManager manager = getSupportFragmentManager();
-        if (manager.getBackStackEntryCount() > 0) {
-            manager.popBackStackImmediate();
-        }
-        cardOpen = false;
-        applyChrome();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.screen_in, R.anim.screen_out);
-        Fragment target = manager.findFragmentByTag(tag);
-        for (Fragment fragment : manager.getFragments()) {
-            if (fragment instanceof DetailsFragment) {
-                continue;
+            if (id == R.id.skyFragment) {
+                paint(R.id.nav_sky);
+            } else if (id == R.id.catalogFragment) {
+                paint(R.id.nav_catalog);
+            } else if (id == R.id.atlasFragment) {
+                paint(R.id.nav_atlas);
+            } else if (id == R.id.profileFragment) {
+                paint(R.id.nav_profile);
             }
-            transaction.hide(fragment);
-        }
-        if (target == null) {
-            transaction.add(R.id.fragmentContainer, fragmentFor(tag), tag);
-        } else {
-            transaction.show(target);
-        }
-        transaction.commit();
-        paint(tag);
+        });
+
+        navSky.setOnClickListener(v -> openTab(R.id.skyFragment));
+        navCatalog.setOnClickListener(v -> openTab(R.id.catalogFragment));
+        navAtlas.setOnClickListener(v -> openTab(R.id.atlasFragment));
+        navProfile.setOnClickListener(v -> openTab(R.id.profileFragment));
     }
 
-    private Fragment fragmentFor(String tag) {
-        if (TAB_CATALOG.equals(tag)) {
-            return new CatalogFragment();
-        }
-        if (TAB_ATLAS.equals(tag)) {
-            return new AtlasFragment();
-        }
-        if (TAB_PROFILE.equals(tag)) {
-            return new ProfileFragment();
-        }
-        return new SkyFragment();
+    private void openTab(int destination) {
+        NavOptions options = new NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setRestoreState(true)
+                .setPopUpTo(navController.getGraph().getStartDestinationId(), false, true)
+                .setEnterAnim(R.anim.screen_in)
+                .setExitAnim(R.anim.screen_out)
+                .setPopEnterAnim(R.anim.screen_in)
+                .setPopExitAnim(R.anim.screen_out)
+                .build();
+        navController.navigate(destination, null, options);
     }
 
-    private void paint(String tag) {
-        navSky.setSelected(TAB_SKY.equals(tag));
-        navCatalog.setSelected(TAB_CATALOG.equals(tag));
-        navAtlas.setSelected(TAB_ATLAS.equals(tag));
-        navProfile.setSelected(TAB_PROFILE.equals(tag));
-    }
-
-    private boolean detailsOnScreen() {
-        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            if (fragment instanceof DetailsFragment && fragment.isAdded() && !fragment.isRemoving()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean showingCard() {
-        return cardOpen || detailsOnScreen();
+    private void paint(int selected) {
+        navSky.setSelected(selected == R.id.nav_sky);
+        navCatalog.setSelected(selected == R.id.nav_catalog);
+        navAtlas.setSelected(selected == R.id.nav_atlas);
+        navProfile.setSelected(selected == R.id.nav_profile);
     }
 
     private void applyChrome() {
         View container = findViewById(R.id.fragmentContainer);
         View nav = findViewById(R.id.bottomNav);
-        boolean card = showingCard();
-        nav.setVisibility(card ? View.GONE : View.VISIBLE);
-        if (card) {
+        nav.setVisibility(cardOpen ? View.GONE : View.VISIBLE);
+        if (cardOpen) {
             container.setPadding(0, 0, 0, 0);
         } else {
             ViewCompat.requestApplyInsets(container);

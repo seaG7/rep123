@@ -15,8 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ru.mirea.samsonova.cloudid.R;
 import ru.mirea.samsonova.cloudid.domain.models.CloudType;
+import androidx.navigation.Navigation;
+
 import ru.mirea.samsonova.cloudid.presentation.ScreenRise;
-import ru.mirea.samsonova.cloudid.presentation.home.HomeActivity;
 import ru.mirea.samsonova.cloudid.presentation.vm.CloudViewModelFactory;
 import ru.mirea.samsonova.cloudid.presentation.vm.HomeViewModel;
 
@@ -58,6 +59,8 @@ public class CatalogFragment extends Fragment {
     }
 
     private void open(CloudType type) {
-        ((HomeActivity) requireActivity()).openDetails(type.getCode(), null);
+        Bundle args = new Bundle();
+        args.putString("code", type.getCode());
+        Navigation.findNavController(requireView()).navigate(R.id.detailsFragment, args);
     }
 }
