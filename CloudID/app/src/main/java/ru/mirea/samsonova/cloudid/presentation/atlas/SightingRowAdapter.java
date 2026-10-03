@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +24,24 @@ public class SightingRowAdapter extends RecyclerView.Adapter<SightingRowAdapter.
         void onClick(Sighting sighting);
     }
 
-    private final List<Sighting> items;
-    private final Map<String, String> images;
+    private final List<Sighting> items = new ArrayList<>();
+    private final Map<String, String> images = new HashMap<>();
     private final OnSightingClick click;
 
-    public SightingRowAdapter(List<Sighting> items, Map<String, String> images, OnSightingClick click) {
-        this.items = items;
-        this.images = images;
+    public SightingRowAdapter(OnSightingClick click) {
         this.click = click;
+    }
+
+    public void setItems(List<Sighting> next, Map<String, String> nextImages) {
+        items.clear();
+        images.clear();
+        if (next != null) {
+            items.addAll(next);
+        }
+        if (nextImages != null) {
+            images.putAll(nextImages);
+        }
+        notifyDataSetChanged();
     }
 
     @NonNull

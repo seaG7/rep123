@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Прогрессия</string>
+    <string name="title">Геометрическая прогрессия со знаменателем 2</string>
+    <string name="lead">Сто членов: aₙ = 2ⁿ⁻¹</string>
+</resources>

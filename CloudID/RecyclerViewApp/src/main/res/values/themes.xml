@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.RecyclerViewApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">#3D4DB8</item>
+        <item name="android:statusBarColor">#F4F7FB</item>
+        <item name="android:navigationBarColor">#F4F7FB</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:listDivider">@drawable/divider</item>
+    </style>
+</resources>

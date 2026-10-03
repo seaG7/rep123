@@ -26,4 +26,7 @@ rootProject.name = "CloudID"
 include(":app")
 include(":domain")
 include(":data")
+include(":ScrollViewApp")
+include(":ListViewApp")
+include(":RecyclerViewApp")
  

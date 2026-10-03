@@ -38,6 +38,8 @@ public class AtlasFragment extends Fragment {
         View empty = view.findViewById(R.id.groupEmpty);
         TextView textEmpty = view.findViewById(R.id.textEmpty);
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
+        SightingRowAdapter adapter = new SightingRowAdapter(this::open);
+        recycler.setAdapter(adapter);
         HomeViewModel viewModel = new ViewModelProvider(requireActivity(), new CloudViewModelFactory())
                 .get(HomeViewModel.class);
         viewModel.library().observe(getViewLifecycleOwner(), library -> {
@@ -56,7 +58,7 @@ public class AtlasFragment extends Fragment {
                 sightings.add(new Sighting(0, row.code, row.name, row.note, "", row.photoUri));
                 images.put(row.code, row.image);
             }
-            recycler.setAdapter(new SightingRowAdapter(sightings, images, this::open));
+            adapter.setItems(sightings, images);
         });
         ScreenRise.play(view);
     }

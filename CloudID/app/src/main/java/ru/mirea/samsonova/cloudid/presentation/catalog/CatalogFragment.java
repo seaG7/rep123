@@ -32,13 +32,15 @@ public class CatalogFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RecyclerView recycler = view.findViewById(R.id.recyclerCatalog);
         recycler.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        CloudCardAdapter adapter = new CloudCardAdapter(this::open);
+        recycler.setAdapter(adapter);
         HomeViewModel viewModel = new ViewModelProvider(requireActivity(), new CloudViewModelFactory())
                 .get(HomeViewModel.class);
         viewModel.library().observe(getViewLifecycleOwner(), library -> {
             if (library == null) {
                 return;
             }
-            recycler.setAdapter(new CloudCardAdapter(library.catalog, this::open));
+            adapter.setItems(library.catalog);
         });
         ScreenRise.play(view);
     }

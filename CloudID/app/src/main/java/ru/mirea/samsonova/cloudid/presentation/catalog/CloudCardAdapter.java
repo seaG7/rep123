@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.mirea.samsonova.cloudid.R;
@@ -21,12 +22,19 @@ public class CloudCardAdapter extends RecyclerView.Adapter<CloudCardAdapter.Hold
         void onClick(CloudType type);
     }
 
-    private final List<CloudType> items;
+    private final List<CloudType> items = new ArrayList<>();
     private final OnCloudClick click;
 
-    public CloudCardAdapter(List<CloudType> items, OnCloudClick click) {
-        this.items = items;
+    public CloudCardAdapter(OnCloudClick click) {
         this.click = click;
+    }
+
+    public void setItems(List<CloudType> next) {
+        items.clear();
+        if (next != null) {
+            items.addAll(next);
+        }
+        notifyDataSetChanged();
     }
 
     @NonNull
