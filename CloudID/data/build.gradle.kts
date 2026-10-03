@@ -27,5 +27,7 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.lifecycle.livedata)
     implementation(libs.tensorflow.lite)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
     annotationProcessor(libs.room.compiler)
 }

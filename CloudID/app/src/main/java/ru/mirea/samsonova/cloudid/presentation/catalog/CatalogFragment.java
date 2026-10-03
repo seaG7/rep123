@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +32,7 @@ public class CatalogFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RecyclerView recycler = view.findViewById(R.id.recyclerCatalog);
+        TextView note = view.findViewById(R.id.textCatalogNote);
         recycler.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         CloudCardAdapter adapter = new CloudCardAdapter(this::open);
         recycler.setAdapter(adapter);
@@ -40,6 +42,9 @@ public class CatalogFragment extends Fragment {
             if (library == null) {
                 return;
             }
+            boolean showNote = library.warning != null && !library.warning.isEmpty();
+            note.setVisibility(showNote ? View.VISIBLE : View.GONE);
+            note.setText(showNote ? library.warning : "");
             adapter.setItems(library.catalog);
         });
         ScreenRise.play(view);

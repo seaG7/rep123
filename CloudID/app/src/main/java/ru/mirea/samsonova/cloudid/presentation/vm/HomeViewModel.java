@@ -18,6 +18,7 @@ import ru.mirea.samsonova.cloudid.domain.GetCloudCatalogUseCase;
 import ru.mirea.samsonova.cloudid.domain.GetMyAtlasUseCase;
 import ru.mirea.samsonova.cloudid.domain.GetProfileUseCase;
 import ru.mirea.samsonova.cloudid.domain.LogoutUseCase;
+import ru.mirea.samsonova.cloudid.domain.models.CatalogLoad;
 import ru.mirea.samsonova.cloudid.domain.models.CloudType;
 import ru.mirea.samsonova.cloudid.domain.models.Sighting;
 import ru.mirea.samsonova.cloudid.domain.models.User;
@@ -79,12 +80,15 @@ public class HomeViewModel extends ViewModel {
         public final List<AtlasRow> atlas;
         public final String atlasEmpty;
         public final ProfileState profile;
+        public final String warning;
 
-        public Library(List<CloudType> catalog, List<AtlasRow> atlas, String atlasEmpty, ProfileState profile) {
+        public Library(List<CloudType> catalog, List<AtlasRow> atlas, String atlasEmpty,
+                       ProfileState profile, String warning) {
             this.catalog = catalog;
             this.atlas = atlas;
             this.atlasEmpty = atlasEmpty;
             this.profile = profile;
+            this.warning = warning == null ? "" : warning;
         }
     }
 
@@ -97,6 +101,7 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<List<CloudType>> catalog = new MutableLiveData<>();
     private List<CloudType> types = new ArrayList<>();
     private List<Sighting> sightings = new ArrayList<>();
+    private volatile String catalogWarning = "";
     private volatile boolean cleared;
 
     public HomeViewModel(GetCloudCatalogUseCase catalogUseCase, GetProfileUseCase profileUseCase,
@@ -114,9 +119,10 @@ public class HomeViewModel extends ViewModel {
             emit();
         });
         executor.execute(() -> {
-            List<CloudType> loaded = catalogUseCase.execute();
+            CatalogLoad loaded = catalogUseCase.execute();
+            catalogWarning = loaded.getWarning();
             if (!cleared) {
-                catalog.postValue(loaded);
+                catalog.postValue(loaded.getTypes());
             }
         });
         Log.d(tag(), "created");
@@ -145,7 +151,7 @@ public class HomeViewModel extends ViewModel {
                     ? "Гость смотрит небо и каталог. Атлас откроется после входа."
                     : "Пока пусто. Определите облако и сохраните кадр.";
         }
-        library.setValue(new Library(types, rows, empty, profileOf(user, guest)));
+        library.setValue(new Library(types, rows, empty, profileOf(user, guest), catalogWarning));
     }
 
     private List<AtlasRow> rowsOf(List<Sighting> source) {

@@ -7,5 +7,7 @@ import ru.mirea.samsonova.cloudid.domain.models.CloudType;
 public interface CloudRepository {
     List<CloudType> getCatalog();
 
+    String lastWarning();
+
     CloudType getDetails(String code);
 }

@@ -1,8 +1,6 @@
 package ru.mirea.samsonova.cloudid.domain;
 
-import java.util.List;
-
-import ru.mirea.samsonova.cloudid.domain.models.CloudType;
+import ru.mirea.samsonova.cloudid.domain.models.CatalogLoad;
 import ru.mirea.samsonova.cloudid.domain.repository.CloudRepository;
 
 /** Просмотреть каталог родов */
@@ -13,7 +11,7 @@ public class GetCloudCatalogUseCase {
         this.cloudRepository = cloudRepository;
     }
 
-    public List<CloudType> execute() {
-        return cloudRepository.getCatalog();
+    public CatalogLoad execute() {
+        return new CatalogLoad(cloudRepository.getCatalog(), cloudRepository.lastWarning());
     }
 }
