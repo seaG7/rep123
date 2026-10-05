@@ -11,5 +11,4 @@
 - [Прототип экранов](reports/design/cloudid-prototype.html)
 - [Диаграммы draw.io](reports/diagrams/CloudID-use-case.drawio)
 - Проект Android Studio: [`CloudID/`](CloudID/)
-  - CloudID: модули `app`, `domain`, `data`, пакет `ru.mirea.samsonova.cloudid`
-  - MovieProject: модули `MovieProject`, `movie-domain`, `movie-data`, пакет `ru.mirea.samsonova.lesson9`
+- Учебный проект MovieProject: [`MovieProject/`](MovieProject/), пакет `ru.mirea.samsonova.Lesson9`, модули `app`, `domain`, `data`
